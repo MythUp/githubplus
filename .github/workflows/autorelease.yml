@@ -46,8 +46,8 @@ jobs:
       - name: Bundle extension (only js and json)
         if: steps.check_tag.outputs.EXISTS == 'false'
         run: |
-          mkdir dist
-          cp scripts/*.js dist/
+          mkdir -p dist/scripts
+          cp scripts/*.js dist/scripts/
           cp *.json dist/
           cd dist
           zip -r ../githubplus.zip .
