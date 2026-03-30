@@ -4,8 +4,8 @@ Upgrade your GitHub experience with custom enhancements.
 
 ## Features
 
-- **Improved Visibility Badges**: Replaces standard GitHub labels (Public/Private/Template) with high-visibility, color-coded borders.
-- **Enhanced Repository Pagination**: Adds a full numerical pagination system to the repositories tab.
+- **Improved Visibility Badges**: Replaces standard GitHub labels (Public/Private/Template) with high-visibility, color-coded borders. [See details](docs/badges.md)
+- **Enhanced Repository Pagination**: Adds a full numerical pagination system to the repositories tab. [See details](docs/pagination.md)
 
 ## Installation
 
