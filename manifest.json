@@ -2,10 +2,10 @@
     "manifest_version": 3,
     "name": "GithubPlus",
     "author": "xl1te (lighscent)",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Upgrade your github experience",
-    "permissions": [
-        "scripting"
+    "host_permissions": [
+        "https://github.com/*"
     ],
     "content_scripts": [
         {
@@ -13,7 +13,8 @@
                 "https://github.com/*"
             ],
             "js": [
-                "content.js"
+                "badges.js",
+                "pagination.js"
             ],
             "run_at": "document_end"
         }
