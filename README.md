@@ -4,8 +4,15 @@ Upgrade your GitHub experience with custom enhancements.
 
 ## Features
 
-- **Improved Visibility Badges**: Replaces standard GitHub labels (Public/Private/Template) with high-visibility, color-coded borders. [See details](docs/badges.md)
-- **Enhanced Repository Pagination**: Adds a full numerical pagination system to the repositories tab. [See details](docs/pagination.md)
+- **Improved Visibility Badges**: Replaces standard GitHub labels (Public/Private/Template) with high-visibility, color-coded borders. 
+- **Enhanced Repository Pagination**: Adds a full numerical pagination system to the repositories tab. 
+
+## Overview
+
+| Feature | Before | After |
+| :---: | :---: | :---: |
+| Improved Visibility Badges | <img src="/docs/imgs/chrome_D1b5J0h1uG.png" alt="Before" width="400"> | <img src="/docs/imgs/chrome_YMzHmccx7l.png" alt="After" width="400"> |
+| Enhanced Repository Pagination | <img src="/docs/imgs/chrome_bogbNVEPxJ.png" alt="Before" width="600"> | <img src="/docs/imgs/chrome_NxNI4pnTLu.png" alt="After" width="600"> |
 
 ## Installation
 
@@ -14,6 +21,7 @@ Upgrade your GitHub experience with custom enhancements.
    - **Chrome**: `chrome://extensions/`
 3. Enable **Developer mode** (toggle in the top-right corner).
 4. Click **Load unpacked** and select the folder containing these files.
+
 
 ## License
 
