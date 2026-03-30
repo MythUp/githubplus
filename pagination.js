@@ -35,9 +35,15 @@
         };
 
         const pages = [];
-        const sidePages = 5;
+        const pagesBefore = 2;
+        const pagesAfter = 4;
+
         for (let i = 1; i <= totalPages; i++) {
-            if (i === 1 || i === totalPages || (i >= currentPage - sidePages && i <= currentPage + sidePages)) {
+            if (
+                i === 1 ||
+                i === totalPages ||
+                (i >= currentPage - pagesBefore && i <= currentPage + pagesAfter)
+            ) {
                 pages.push(i);
             }
         }
