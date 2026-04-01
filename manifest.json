@@ -5,9 +5,9 @@
     "version": "1.2.2",
     "description": "Upgrade your github experience",
     "icons": {
-        "16": "assets/github.png",
-        "48": "assets/github.png",
-        "128": "assets/github.png"
+        "16": "assets/githubplus.png",
+        "48": "assets/githubplus.png",
+        "128": "assets/githubplus.png"
     },
     "minimum_chrome_version": "120",
     "browser_specific_settings": {
