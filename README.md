@@ -1,5 +1,7 @@
 # GitHub+
 
+![Version](https://img.shields.io/github/v/release/lighscent/githubplus?style=flat-square&color=blue) ![License](https://img.shields.io/github/license/lighscent/githubplus?style=flat-square&color=important) ![Stars](https://img.shields.io/github/stars/lighscent/githubplus?style=flat-square&color=yellow) ![Issues](https://img.shields.io/github/issues/lighscent/githubplus?style=flat-square&color=success)
+
 Upgrade your GitHub experience with custom enhancements.
 
 ## Features
