@@ -59,6 +59,7 @@ GitHub+ is a browser extension designed to make your GitHub navigation smoother 
 
 > [!NOTE]
 > **Store Availability**
+> 
 > Official publication on the Chrome Web Store and Firefox Add-ons is planned for the near future to enable automatic updates.
 
 ---
