@@ -18,11 +18,14 @@ Upgrade your GitHub experience with custom enhancements.
 
 ## Installation
 
-1. Clone or download this repository.
+1. Download the latest version from the [releases page](../../releases).
 2. Open your browser's extensions page:
+   - **Brave**: `brave://extensions/`
    - **Chrome**: `chrome://extensions/`
+   - **Firefox**: `about:debugging#/runtime/this-firefox` (Load Temporary Add-on)
+   - **Opera / Opera GX**: `opera://extensions/`
 3. Enable **Developer mode** (toggle in the top-right corner).
-4. Click **Load unpacked** and select the folder containing these files.
+4. Click **Load unpacked** (or **Load Temporary Add-on** for Firefox) and select the folder/archive containing these files.
 
 
 ## License
