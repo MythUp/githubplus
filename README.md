@@ -33,7 +33,7 @@ GitHub+ is a browser extension designed to make your GitHub navigation smoother 
     * **Firefox**: `about:debugging#/runtime/this-firefox`
     * **Opera**: `opera://extensions/`
 3. **Developer Mode**: Enable the toggle (usually in the top-right corner).
-4. **Load Extension**: Click **"Load unpacked"** and select the folder containing the project files.
+4. **Load unpacked** (or **Load Temporary Add-on** for Firefox) and select the folder/archive containing these files.
 
 ---
 
