@@ -1,5 +1,42 @@
 (function () {
+    let isEnabled = true;
     const REPO_PER_PAGE = 30;
+
+    // Check if pagination is enabled
+    chrome.storage.sync.get('pagination-enabled', (items) => {
+        isEnabled = items['pagination-enabled'] !== false;
+        managePagination();
+    });
+
+    // Listen for settings changes
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.type === 'SETTINGS_CHANGED' && request.setting === 'pagination-enabled') {
+            isEnabled = request.value;
+            managePagination();
+        } else if (request.type === 'SETTINGS_RESET') {
+            isEnabled = true;
+            managePagination();
+        }
+    });
+
+    function removePagination() {
+        const customPagination = document.querySelector('.custom-repo-pagination');
+        if (customPagination) {
+            customPagination.remove();
+        }
+        const defaultPagination = document.querySelector('.paginate-container');
+        if (defaultPagination) {
+            defaultPagination.style.display = '';
+        }
+    }
+
+    function managePagination() {
+        if (!isEnabled) {
+            removePagination();
+            return;
+        }
+        addPagination();
+    }
 
     function addPagination() {
         if (!window.location.search.includes('tab=repositories')) return;
@@ -73,7 +110,7 @@
         if (!window.location.search.includes('tab=repositories')) return;
 
         if (debounceFrame) cancelAnimationFrame(debounceFrame);
-        debounceFrame = requestAnimationFrame(addPagination);
+        debounceFrame = requestAnimationFrame(managePagination);
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
