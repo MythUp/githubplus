@@ -1,13 +1,13 @@
 (function () {
     let isEnabled = true;
 
-    chrome.storage.sync.get('private-email-enabled', (items) => {
-        isEnabled = items['private-email-enabled'] !== false;
+    chrome.storage.sync.get('emails-enabled', (items) => {
+        isEnabled = items['emails-enabled'] !== false;
         managePrivateEmail();
     });
 
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        if (request.type === 'SETTINGS_CHANGED' && request.setting === 'private-email-enabled') {
+        if (request.type === 'SETTINGS_CHANGED' && request.setting === 'emails-enabled') {
             isEnabled = request.value;
             managePrivateEmail();
         } else if (request.type === 'SETTINGS_RESET') {

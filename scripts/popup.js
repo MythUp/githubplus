@@ -5,7 +5,7 @@ const DEFAULT_SETTINGS = {
     'vscode-enabled': true,
     'repo-info-enabled': true,
     'contributors-enabled': true,
-    'private-email-enabled': true
+    'emails-enabled': true
 };
 
 // Load version from manifest
@@ -26,7 +26,7 @@ function loadSettings() {
         document.getElementById('toggle-vscode').checked = items['vscode-enabled'];
         document.getElementById('toggle-repo-info').checked = items['repo-info-enabled'];
         document.getElementById('toggle-contributors').checked = items['contributors-enabled'];
-        document.getElementById('toggle-private-email').checked = items['private-email-enabled'];
+        document.getElementById('toggle-private-email').checked = items['emails-enabled'];
     });
 }
 
@@ -74,6 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('toggle-private-email').addEventListener('change', (e) => {
-        saveSetting('private-email-enabled', e.target.checked);
+        saveSetting('emails-enabled', e.target.checked);
     });
 });
