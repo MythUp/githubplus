@@ -1,5 +1,6 @@
 (function () {
     let isEnabled = true;
+    let currentPathname = window.location.pathname;
 
     chrome.storage.sync.get('emails-enabled', (items) => {
         isEnabled = items['emails-enabled'] !== false;
@@ -9,19 +10,65 @@
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.type === 'SETTINGS_CHANGED' && request.setting === 'emails-enabled') {
             isEnabled = request.value;
-            managePrivateEmail();
+            syncPrivateEmailState();
         } else if (request.type === 'SETTINGS_RESET') {
             isEnabled = true;
-            managePrivateEmail();
+            syncPrivateEmailState();
         }
     });
 
-    function managePrivateEmail() {
-        if (!isEnabled) {
+    function syncPrivateEmailState() {
+        if (window.location.pathname === currentPathname) {
+            if (!isEnabled) {
+                removePrivateEmailClick();
+                return;
+            }
+
+            if (window.location.pathname.includes('/settings/emails')) {
+                setupPrivateEmailCopy();
+            } else {
+                removePrivateEmailClick();
+            }
+            return;
+        }
+
+        currentPathname = window.location.pathname;
+
+        if (!isEnabled || !window.location.pathname.includes('/settings/emails')) {
             removePrivateEmailClick();
             return;
         }
+
         setupPrivateEmailCopy();
+    }
+
+    function installNavigationWatcher() {
+        if (window.__ghpEmailsNavigationWatcherInstalled) return;
+        window.__ghpEmailsNavigationWatcherInstalled = true;
+
+        const emitLocationChange = () => {
+            window.dispatchEvent(new Event('ghp:locationchange'));
+        };
+
+        const wrapHistoryMethod = (method) => {
+            const original = history[method];
+            history[method] = function () {
+                const result = original.apply(this, arguments);
+                emitLocationChange();
+                return result;
+            };
+        };
+
+        wrapHistoryMethod('pushState');
+        wrapHistoryMethod('replaceState');
+
+        window.addEventListener('popstate', emitLocationChange);
+        window.addEventListener('turbo:load', emitLocationChange);
+        window.addEventListener('turbo:render', emitLocationChange);
+        window.addEventListener('turbo:frame-load', emitLocationChange);
+        window.addEventListener('ghp:locationchange', () => {
+            setTimeout(syncPrivateEmailState, 0);
+        });
     }
 
     function setupPrivateEmailCopy() {
@@ -234,7 +281,9 @@
         });
     }
 
+    installNavigationWatcher();
+
     setTimeout(() => {
-        managePrivateEmail();
+        syncPrivateEmailState();
     }, 500);
 })();
