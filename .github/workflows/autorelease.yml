@@ -47,9 +47,11 @@ jobs:
         run: |
           mkdir -p dist/scripts
           mkdir -p dist/assets
+          mkdir -p dist/styles
           cp scripts/*.js dist/scripts/
           cp assets/githubplus.png dist/assets/
           cp *.json dist/
+          cp styles/popup.css dist/styles
           cd dist
           
           zip -r ../githubplus-brave-${{ steps.get_version.outputs.VERSION }}.zip .
