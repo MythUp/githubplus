@@ -1,8 +1,11 @@
 (function () {
     let isEnabled = true;
     let contributorCache = null;
-    let cacheTime = 0;
-    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+    let contributorFetchPromise = null;
+    let cachedRepoKey = null;
+    let cachedDate = null;
+
+    const CACHE_NAMESPACE = 'contributors-stats-cache';
 
     // Check if contributors feature is enabled
     chrome.storage.sync.get('contributors-enabled', (items) => {
@@ -87,6 +90,28 @@
         return null;
     }
 
+    function getTodayKey() {
+        return new Date().toISOString().slice(0, 10);
+    }
+
+    function getCacheKey(repoKey) {
+        return `${CACHE_NAMESPACE}:${repoKey}`;
+    }
+
+    function readStoredCache(repoKey) {
+        return new Promise((resolve) => {
+            chrome.storage.local.get(getCacheKey(repoKey), (items) => {
+                resolve(items[getCacheKey(repoKey)] || null);
+            });
+        });
+    }
+
+    function writeStoredCache(repoKey, payload) {
+        return new Promise((resolve) => {
+            chrome.storage.local.set({ [getCacheKey(repoKey)]: payload }, () => resolve());
+        });
+    }
+
     async function fetchContributors() {
         // Determine repo owner/name; bail out if not a repository page
         const repoInfo = getRepoOwnerAndName();
@@ -94,36 +119,59 @@
 
         const owner = repoInfo.owner;
         const repo = repoInfo.repo;
+        const repoKey = `${owner}/${repo}`;
+        const todayKey = getTodayKey();
 
-        // Check cache
-        const now = Date.now();
-        if (contributorCache && (now - cacheTime) < CACHE_DURATION) {
+        if (contributorCache && cachedRepoKey === repoKey && cachedDate === todayKey) {
             return contributorCache;
         }
 
-        try {
-            const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contributors?per_page=100`);
-            if (!response.ok) return null;
-
-            const contributors = await response.json();
-            const contributorMap = {};
-            
-            contributors.forEach(contrib => {
-                contributorMap[contrib.login.toLowerCase()] = {
-                    commits: contrib.contributions,
-                    id: contrib.id
-                };
-            });
-
-            const totalCommits = contributors.reduce((sum, c) => sum + c.contributions, 0);
-            
-            contributorCache = { map: contributorMap, total: totalCommits };
-            cacheTime = now;
-            
-            return contributorCache;
-        } catch (error) {
-            return null;
+        if (contributorFetchPromise && cachedRepoKey === repoKey) {
+            return contributorFetchPromise;
         }
+
+        cachedRepoKey = repoKey;
+        contributorFetchPromise = (async () => {
+            try {
+                const storedCache = await readStoredCache(repoKey);
+                if (storedCache && storedCache.date === todayKey && storedCache.data) {
+                    contributorCache = storedCache.data;
+                    cachedDate = todayKey;
+                    return contributorCache;
+                }
+
+                const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contributors?per_page=100`);
+                if (!response.ok) return null;
+
+                const contributors = await response.json();
+                const contributorMap = {};
+
+                contributors.forEach(contrib => {
+                    contributorMap[contrib.login.toLowerCase()] = {
+                        commits: contrib.contributions,
+                        id: contrib.id
+                    };
+                });
+
+                const totalCommits = contributors.reduce((sum, c) => sum + c.contributions, 0);
+
+                contributorCache = { map: contributorMap, total: totalCommits };
+                cachedDate = todayKey;
+
+                await writeStoredCache(repoKey, {
+                    date: todayKey,
+                    data: contributorCache
+                });
+
+                return contributorCache;
+            } catch (error) {
+                return null;
+            } finally {
+                contributorFetchPromise = null;
+            }
+        })();
+
+        return contributorFetchPromise;
     }
 
     async function enhanceContributors() {
@@ -131,14 +179,14 @@
 
         injectStyles();
 
+        const contributorItems = document.querySelectorAll('li.mb-2.d-flex');
+        if (!contributorItems.length) return;
+
         const data = await fetchContributors();
         if (!data) return;
 
         const { map: contributorMap, total: totalCommits } = data;
 
-        // Find all contributor list items
-        const contributorItems = document.querySelectorAll('li.mb-2.d-flex');
-        
         contributorItems.forEach(listItem => {
             // Skip if already enhanced
             if (listItem.querySelector('.ghp-contrib-stats')) return;
