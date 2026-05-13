@@ -1,4 +1,23 @@
 (function () {
+    let isEnabled = true;
+
+    // Check if VS Code button is enabled
+    chrome.storage.sync.get('vscode-enabled', (items) => {
+        isEnabled = items['vscode-enabled'] !== false;
+        manageVSCodeButton();
+    });
+
+    // Listen for settings changes
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.type === 'SETTINGS_CHANGED' && request.setting === 'vscode-enabled') {
+            isEnabled = request.value;
+            manageVSCodeButton();
+        } else if (request.type === 'SETTINGS_RESET') {
+            isEnabled = true;
+            manageVSCodeButton();
+        }
+    });
+
     const STYLES = `
         .btn-ghp-vscode {
             display: inline-flex;
@@ -69,6 +88,22 @@
         return match ? match[1] : null;
     }
 
+    function removeVSCodeButton() {
+        const btn = document.querySelector('.btn-ghp-vscode');
+        if (btn) {
+            btn.remove();
+        }
+    }
+
+    function manageVSCodeButton() {
+        if (!isEnabled) {
+            removeVSCodeButton();
+            return;
+        }
+        injectStyles();
+        addVSCodeButton();
+    }
+
     function addVSCodeButton() {
         if (document.querySelector('.btn-ghp-vscode')) return;
 
@@ -96,12 +131,11 @@
     }
 
     injectStyles();
-    addVSCodeButton();
 
     let debounceFrame;
     const observer = new MutationObserver(() => {
         if (debounceFrame) cancelAnimationFrame(debounceFrame);
-        debounceFrame = requestAnimationFrame(addVSCodeButton);
+        debounceFrame = requestAnimationFrame(manageVSCodeButton);
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
